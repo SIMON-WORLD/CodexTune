@@ -1,8 +1,8 @@
 # Measured Results
 
-Real measurements from a Windows investigation (2026-08). Machine: Windows 10/11, ChatGPT/Codex Desktop, 16GB RAM.
+Real measurements from Windows investigations (2026-08). Machine: Windows 10/11, ChatGPT/Codex Desktop, 16GB RAM.
 
-## Startup window (plugin/skill related)
+## Startup window (plugin/skill related) - Machine A
 
 | Metric | Before | After |
 |---|---|---|
@@ -32,3 +32,30 @@ Actions applied: removed 61 unused project skills, quarantined 179 unenabled sta
 
 - 61 of 101 project skills showed catalog-only presence (never referenced in ~75k conversation lines) and were moved out (recoverable backup).
 - Context budget after cleanup: `total_skills=233, included=209, omitted=24` (was 294/220/74).
+
+## Second machine baseline (2026-08-02) - Machine B
+
+Baseline collected before any cleanup on the second machine with the extended collector (`-ProjectRoot . -IncludeExtended`).
+
+| Metric | Value |
+|---|---|
+| Staged plugin packages in `.codex\.tmp\plugins\plugins` | 180 |
+| SKILL.md files: user `.codex\skills` | 420 |
+| SKILL.md files: user `.agents\skills` | 5 |
+| SKILL.md files: project `.agents\skills` (Project Test) | 49 |
+| SKILL.md files: plugin cache | 73 |
+| `plugin/list` rows in `logs_2.sqlite` | 546 |
+| `skills/list` rows in `logs_2.sqlite` | 3556 |
+| Model refresh failures in `logs_2.sqlite` | 4822 |
+| MCP transport failures | present (`http://127.0.0.1:5157/mcp`, latest 2026-08-02) |
+| `logs_2.sqlite` size | 662.58 MB |
+| Active sessions | 6.82 GB / 423 files |
+| Archived sessions | 2.00 GB / 66 files |
+| Largest session JSONL | 541.61 MB |
+| C: free | 9.25 GB |
+| Proxy env | `http://127.0.0.1:7897` |
+| Loopback exemptions | stale `AppContainer NOT FOUND` entries |
+| `config.toml` MCP servers | 8 |
+| `stata-mcp` launch flags | `--refresh --refresh-package mcp-stata@latest` |
+
+Actions applied: none yet (baseline only). The same `180` staged plugin count and the same `stata-mcp` flag pattern were observed on Machine A before cleanup, so both machines should apply the same controlled cleanup sequence and measure startup seconds before/after each change.
