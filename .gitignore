@@ -1,0 +1,7 @@
+# diagnostic output
+reports/
+*.log
+
+# never commit secrets
+*.env
+.env
