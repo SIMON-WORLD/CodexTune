@@ -23,9 +23,9 @@ CodexTune is a collection of read-only diagnostic tools, playbooks, and a reusab
 
 CodexTune 是一套只读诊断工具、排查手册和可复用 skill，用于诊断和修复 ChatGPT/Codex Desktop 环境的性能问题：冷启动慢（如约 30 秒）、旧任务加载慢、skill/插件上下文超预算、MCP 服务故障与版本冲突、工作区膨胀与内存压力。
 
-The findings and fixes are based on a real Windows investigation; measured before/after data is in [docs/measured-results.md](docs/measured-results.md).
+The findings and fixes are based on real Windows investigations; measured data is in [docs/measured-results.md](docs/measured-results.md).
 
-方案与修复基于一次真实的 Windows 排查，前后对照数据见 [docs/measured-results.md](docs/measured-results.md)。
+方案与修复基于真实的 Windows 排查，前后对照数据见 [docs/measured-results.md](docs/measured-results.md)。
 
 ## Features / 功能
 
@@ -52,6 +52,12 @@ Copy `SKILL.md` into your project or user skills directory, then ask Codex to ru
 # Read-only. Writes evidence JSON to ./reports/<timestamp>/
 # 只读操作。证据输出到 ./reports/<时间戳>/
 powershell -ExecutionPolicy Bypass -File scripts/01_collect_evidence.ps1
+
+# Optional: include the current project's .agents/skills and extended metrics
+# (session size, disk free, OneDrive memory, proxy, loopback, config summary)
+# 可选：纳入当前项目的 .agents/skills 和扩展指标
+# （会话体积、磁盘剩余、OneDrive 内存、代理、loopback、配置摘要）
+powershell -ExecutionPolicy Bypass -File scripts/01_collect_evidence.ps1 -ProjectRoot . -IncludeExtended
 ```
 
 ### 3. Follow the playbooks / 按手册排查
