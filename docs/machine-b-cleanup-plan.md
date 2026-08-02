@@ -33,13 +33,15 @@ Each step: backup -> apply -> restart -> measure. One PR per step with before/af
 
 ### Step 1: Skill cleanup / Skill 清理
 
+Target scope / 目标范围: user-level `.codex\skills` (project `.agents\skills` may be left untouched if actively used) / 用户级 `.codex\skills`（项目级 `.agents\skills` 如在使用中可保留不动）。
+
 1. Collect evidence / 采集证据:
    ```powershell
    powershell -ExecutionPolicy Bypass -File scripts\01_collect_evidence.ps1 -ProjectRoot . -IncludeExtended
    ```
 2. Analyze actual skill usage from session records (catalog-only presence = unused) / 分析会话记录中的实际 skill 使用（仅目录出现 = 未使用）。
-3. Move unused skills out of `.agents\skills` to a recoverable backup / 将未使用 skill 移出 `.agents\skills` 到可恢复备份。
-4. Measure / 测量: `total_skills` and `omitted_skills` in logs (`truncated skill metadata`). / 记录日志中 total_skills / omitted_skills。
+3. Move unused skills to a recoverable backup / 将未使用 skill 移到可恢复备份。
+4. Measure / 测量: prefer `total_skills` / `omitted_skills` from logs (`truncated skill metadata`); if those rows are absent on this machine, use SKILL.md counts plus `skills/list` RPC counts as the before/after metric / 优先用日志中的 total_skills / omitted_skills；如本机日志无此行，改用 SKILL.md 数量加 skills/list RPC 次数作为前后指标。
 
 ### Step 2: Plugin quarantine / 插件隔离
 
@@ -51,7 +53,7 @@ Each step: backup -> apply -> restart -> measure. One PR per step with before/af
 
 1. Backup `config.toml` (contains tokens - keep private) / 备份 config.toml（含令牌，注意保密）。
 2. `stata-mcp`: remove `--refresh --refresh-package`, add `--with mcp<2` (mcp-stata 3.3.0 requires mcp 1.x; mcp 2.x removed `mcp.server.fastmcp`) / 去掉 --refresh 并加 mcp<2 约束。
-3. Remove unused MCP servers (e.g. connector-proxy with repeated 502s) / 移除不用的 MCP 服务。
+3. Remove unused MCP servers. `connector-proxy` was confirmed dead on Machine B: nothing listens on 127.0.0.1:5157 and no service/installer/usage records exist, so it is a dead HTTP endpoint, not just intermittent 502s / 移除不用的 MCP 服务。第二台确认 connector-proxy 为死端点：127.0.0.1:5157 无监听、无服务/安装/使用记录，并非只是间歇性 502。
 4. Rebuild the uv cache once with `--refresh`, then verify a non-refresh launch works / 一次性 --refresh 重建缓存，再验证不带 --refresh 可启动。
 
 ### Step 4: Disk space / C 盘空间
@@ -59,7 +61,7 @@ Each step: backup -> apply -> restart -> measure. One PR per step with before/af
 1. `uv cache clean` or targeted uv cache cleanup / uv 缓存清理。
 2. `npm cache clean --force` if npm is used / 如使用 npm 则清理 npm 缓存。
 3. Remove stale `.codex\.tmp` staging leftovers / 清理 .codex\.tmp 暂存残留。
-4. Keep the quarantined plugin/skill backups on a non-C: drive / 隔离备份放到非 C 盘。
+4. Keep quarantined backups on a non-C: drive if possible; keeping them on C: (e.g. `.codex\.tmp`) is also acceptable for same-volume rollback and to avoid cloud sync, with recovery manifests kept in the task dir / 隔离备份尽量放非 C 盘；保留在 C 盘（如 .codex\.tmp）也可接受，便于同卷回滚、避免云同步，恢复清单放在任务目录。
 
 ### Step 5: Large session / 大会话
 
