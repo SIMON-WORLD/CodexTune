@@ -59,3 +59,26 @@ Baseline collected before any cleanup on the second machine with the extended co
 | `stata-mcp` launch flags | `--refresh --refresh-package mcp-stata@latest` |
 
 Actions applied: none yet (baseline only). The same `180` staged plugin count and the same `stata-mcp` flag pattern were observed on Machine A before cleanup, so both machines should apply the same controlled cleanup sequence and measure startup seconds before/after each change.
+
+## Second machine after cleanup (2026-08-03) - Machine B
+
+Collected with the extended collector after the first cleanup round (`-ProjectRoot . -IncludeExtended`).
+
+| Metric | Before | After |
+|---|---|---|
+| Staged plugin packages in `.codex\.tmp\plugins\plugins` | 180 | 0 |
+| SKILL.md files: user `.codex\skills` | 420 | 400 |
+| `plugin/list` rows in startup window after restart | 13 | 12 |
+| `skills/list` rows in startup window after restart | 122 | 80 |
+| Model refresh failures after restart | 4822 (cumulative) | 0 |
+| connector-proxy / `127.0.0.1:5157` errors after restart | present | 0 |
+| `logs_2.sqlite` size | 662.58 MB | 662.58 MB (unchanged; safe rebuild pending, see playbook 05) |
+| Active sessions | 6.82 GB / 423 files | 5.80 GB / 435 files |
+| Archived sessions | 2.00 GB / 66 files | 3.04 GB / 69 files |
+| Largest session JSONL | 541.61 MB | unchanged (kept in use) |
+| C: free | 9.25 GB | 20.92 GB |
+| `config.toml` MCP servers | 8 | 5 |
+| `stata-mcp` launch flags | `--refresh --refresh-package mcp-stata@latest` | `--from mcp-stata@latest --with mcp<2 mcp-stata` |
+| Loopback exemptions | non-elevated view showed `NOT FOUND` | false alarm: 5 valid Microsoft Store/Xbox entries, unchanged |
+
+Actions applied: removed dead `connector-proxy`; fixed `stata-mcp` flags; quarantined 180 unenabled staged plugins and 20 zero-reference user skills; cleaned npm cache and 505 orphaned uv `.tmp*` dirs (about 12.75 GB freed). Remaining: safe `logs_2.sqlite` rebuild (pending), and analytics send failures tied to the proxy path still appear occasionally.
