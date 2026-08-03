@@ -60,6 +60,14 @@ powershell -ExecutionPolicy Bypass -File scripts/01_collect_evidence.ps1
 powershell -ExecutionPolicy Bypass -File scripts/01_collect_evidence.ps1 -ProjectRoot . -IncludeExtended
 ```
 
+```powershell
+# Analyze the local log DB (read-only)
+# 只读分析日志库，统计模型刷新/MCP/skill 相关日志次数
+python scripts/02_analyze_logs.py
+python scripts/02_analyze_logs.py --since "2026-08-02 15:33:30"
+python scripts/02_analyze_logs.py --json
+```
+
 ### 3. Follow the playbooks / 按手册排查
 
 Pick the playbook that matches your symptom / 按症状选择对应手册：
@@ -81,7 +89,8 @@ CodexTune/
 │   └── measured-results.md  # Real measured before/after data / 实测前后数据
 ├── playbooks/               # Step-by-step troubleshooting guides / 排查手册
 └── scripts/
-    └── 01_collect_evidence.ps1  # Read-only evidence collector / 只读证据采集
+    ├── 01_collect_evidence.ps1  # Read-only evidence collector / 只读证据采集
+    └── 02_analyze_logs.py       # Read-only log DB analyzer / 只读日志库分析
 ```
 
 ## Multi-Machine Workflow / 多机协作流程
