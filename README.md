@@ -68,6 +68,7 @@ Pick the playbook that matches your symptom / 按症状选择对应手册：
 - [02-old-thread-slow.md](playbooks/02-old-thread-slow.md) – old thread loading / 旧任务加载慢
 - [03-skill-bloat.md](playbooks/03-skill-bloat.md) – skill/plugin context / skill/插件超预算
 - [04-mcp-and-plugins.md](playbooks/04-mcp-and-plugins.md) – MCP & plugin cleanup / MCP 与插件清理
+- [05-database-safety.md](playbooks/05-database-safety.md) – database bloat & safe recovery / 数据库膨胀与安全恢复
 
 ## Repo Layout / 仓库结构
 
