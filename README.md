@@ -62,6 +62,15 @@ python scripts/02_analyze_logs.py --since "2026-08-02 15:33:30"
 python scripts/02_analyze_logs.py --json
 ```
 
+```powershell
+# Check log DB health: size, rows, levels, triggers, write rate (read-only)
+python scripts/03_check_log_db.py --sample-seconds 20
+
+# Install the TRACE-dropping trigger (dry-run first; --apply only after Codex is closed)
+python scripts/04_install_log_trigger.py --dry-run
+python scripts/04_install_log_trigger.py --apply
+```
+
 ## Repo Layout
 
 ```text
@@ -76,7 +85,9 @@ CodexTune/
 ├── playbooks/              # Step-by-step troubleshooting guides
 └── scripts/
     ├── 01_collect_evidence.ps1  # Read-only evidence collector
-    └── 02_analyze_logs.py       # Read-only log DB analyzer
+    ├── 02_analyze_logs.py       # Read-only log DB analyzer
+    ├── 03_check_log_db.py       # Read-only log DB health check
+    └── 04_install_log_trigger.py # Install TRACE-dropping trigger
 ```
 
 ## Playbooks
