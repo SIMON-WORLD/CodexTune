@@ -20,7 +20,62 @@ Local SQLite databases (`logs_2.sqlite`, `state_5.sqlite`) can grow without boun
 
 任何 Codex 进程存活时禁止操作数据库；禁止直接删除，必须连同 `-wal`/`-shm` 一起备份后移走；会话正文在 JSONL，不在日志库。
 
-## Safe procedure / 安全流程
+## TRACE storm mitigation / TRACE 写盘风暴缓解
+
+`logs_2.sqlite` can be hammered by TRACE-level streaming events (full SSE `response.completed`, `output_text.delta`, etc.). Upstream reduced noise by ~85% in `rust-v0.142/0.143` (original issue openai/codex#28224 closed), but openai/codex#35092 (per-SSE TRACE still written in 0.145/0.146) and #31142 (Windows desktop WAL) remain open.
+
+`logs_2.sqlite` 会被 TRACE 流式事件高频写入；官方 0.142/0.143 降噪约 85%（#28224 关闭），但 #35092、#31142 仍未根治。
+
+### 1. Check health / 健康检查（只读）
+
+```powershell
+python scripts/03_check_log_db.py --sample-seconds 20
+```
+
+Watch for:
+
+- `max(id)` far above `rows` -> historical TRACE storm (e.g. 13.9M vs 41k on Machine B).
+- File size much larger than estimated content -> SQLite pages not reclaimed without VACUUM.
+- `triggers` list missing `drop_non_warn_error_logs` -> TRACE writes are not being filtered.
+
+### 2. Install the filter trigger / 安装过滤触发器
+
+The trigger drops non-WARN/ERROR rows before they hit the log DB. Dry-run first; apply only after Codex is fully closed.
+
+```powershell
+python scripts/04_install_log_trigger.py --dry-run
+python scripts/04_install_log_trigger.py --apply
+# ERROR-only variant:
+python scripts/04_install_log_trigger.py --apply --level error-only
+```
+
+Equivalent SQL (WARN+ERROR variant):
+
+```sql
+DROP TRIGGER IF EXISTS drop_non_warn_error_logs;
+CREATE TRIGGER drop_non_warn_error_logs
+BEFORE INSERT ON logs
+WHEN NEW.level NOT IN ('WARN', 'ERROR')
+BEGIN
+  SELECT RAISE(IGNORE);
+END;
+```
+
+### 3. Rebuild the bloated DB safely / 安全重建膨胀数据库
+
+Important: the trigger lives inside the DB. If you move the DB aside and let Codex rebuild it, the trigger is lost; reinstall it after the rebuild.
+
+1. Fully quit Codex and verify no `ChatGPT`, `codex`, `codex-app-manager`, or `app-server` processes remain.
+2. Back up `logs_2.sqlite`, `logs_2.sqlite-wal`, `logs_2.sqlite-shm` (SHA-256 recorded).
+3. Move (rename) the originals aside, do not delete.
+4. Start Codex and let it rebuild the DB.
+5. Reinstall the trigger with `scripts/04_install_log_trigger.py --apply`.
+6. Verify the thread list and sessions still appear (they come from JSONL).
+7. Keep the backup until the app has worked correctly for at least one full restart.
+
+重建后必须重新安装触发器；否则 TRACE 高频写盘会随新库恢复。
+
+## Safe procedure / 安全流程（通用）
 
 1. Fully quit Codex and verify no `ChatGPT`, `codex`, `codex-app-manager`, or `app-server` processes remain (a visible window can be closed while background processes keep running).
 2. Back up `logs_2.sqlite`, `logs_2.sqlite-wal`, `logs_2.sqlite-shm` (and the `state_5.sqlite*` set if also needed) to a private location with SHA-256 recorded.
