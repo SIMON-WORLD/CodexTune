@@ -75,6 +75,16 @@ Important: the trigger lives inside the DB. If you move the DB aside and let Cod
 
 重建后必须重新安装触发器；否则 TRACE 高频写盘会随新库恢复。
 
+### 4. Long-term expectation / 长期预期
+
+The trigger stops the TRACE storm, but it does not make the DB stay tiny forever:
+
+- Machine B current content is about 215 MiB (41k rows: ~209 MiB ERROR + ~6 MiB WARN), while the file is 662 MiB because SQLite keeps freed pages unless VACUUM runs.
+- After a rebuild, the file starts small, but WARN/ERROR rows will refill the retention window over time. Without periodic VACUUM, the file can grow back toward hundreds of MiB.
+- To keep it small long-term: use the ERROR-only trigger, and/or run a VACUUM while Codex is fully closed (backup first), and monitor with `scripts/03_check_log_db.py`.
+
+触发器阻止 TRACE 风暴，但不会让库永远很小：重建后文件会从小开始，WARN/ERROR 会随时间重新填满保留窗口；没有定期 VACUUM 时文件仍可能涨回数百 MiB。长期方案是 ERROR-only 触发器 + 定期在 Codex 关闭时收缩（先备份），并用 `03_check_log_db.py` 监控。
+
 ## Safe procedure / 安全流程（通用）
 
 1. Fully quit Codex and verify no `ChatGPT`, `codex`, `codex-app-manager`, or `app-server` processes remain (a visible window can be closed while background processes keep running).
