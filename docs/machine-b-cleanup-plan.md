@@ -23,7 +23,7 @@ These need their own attention and should be tracked as issues:
 1. **Model refresh failures / 模型刷新失败**: 4822 rows in `logs_2.sqlite` (`failed to refresh available models`). Way more than Machine A. Check network/proxy stability and the models catalog path. / 日志库中 4822 条模型刷新失败记录，远多于第一台。检查网络/代理稳定性与模型目录路径。
 2. **Largest session / 最大会话**: 541.61 MB single rollout. Plan a handoff + new thread; archive it. / 单个会话 541.61 MB。建议精简交接 + 新建会话后归档。
 3. **C: free space / C 盘空间**: only 9.25 GB free. Clean the uv cache, npm cache, and temporary plugin staging before further work. / 仅剩 9.25 GB。先清理 uv/npm 缓存与插件暂存目录。
-4. **Stale loopback exemptions / 过期 loopback 豁免**: `CheckNetIsolation LoopbackExempt -s` shows stale `AppContainer NOT FOUND` entries. Remove stale entries carefully. / loopback 豁免存在过期的 AppContainer 条目，需谨慎清理。
+4. **Loopback exemptions / loopback 豁免（误报纠正）**: `CheckNetIsolation LoopbackExempt -s` run from a non-elevated shell can show `AppContainer NOT FOUND` for valid entries. Always check from an elevated shell. On Machine B all 5 entries are valid Microsoft Store/Xbox packages and must not be deleted. / 非提权环境可能把有效条目显示为 NOT FOUND，必须提权查看；第二台 5 条均为有效商店/Xbox 包，不可删除。
 
 ## Fix sequence / 修复顺序
 
