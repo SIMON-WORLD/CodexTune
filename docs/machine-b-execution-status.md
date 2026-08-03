@@ -37,3 +37,9 @@ Updated: 2026-08-02 by Machine B. This supplements `machine-b-cleanup-plan.md` w
 
 - Quarantines were kept on the C: volume (`.codex\.tmp`) for same-volume rollback; recovery manifests are outside the repo.
 - Evidence packages remain private and are not committed.
+
+## Loopback exemptions / loopback 豁免 - false alarm
+
+- Non-elevated `CheckNetIsolation LoopbackExempt -s` showed `AppContainer NOT FOUND` for 5 entries.
+- Elevated check resolved all 5: `microsoft.desktopappinstaller`, `microsoft.windowsstore`, `microsoft.storepurchaseapp`, `microsoft.xboxidentityprovider`, `microsoft.xbox.tcui` (all `_8wekyb3d8bbwe`).
+- No entries were deleted; the earlier cleanup-plan item is corrected.
