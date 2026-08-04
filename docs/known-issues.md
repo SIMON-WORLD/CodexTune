@@ -52,3 +52,25 @@ Rename-Item "$env:USERPROFILE\.codex\config.toml" "config.toml.bak"
 - Keep the file UTF-8; avoid mixed encodings and mojibake path keys. 保持 UTF-8 编码，避免混合编码和乱码路径键。
 - Validate TOML after every edit (Python 3.11+ `tomllib`). 每次修改后用 TOML 解析器校验。
 - Back up before every change. Backups contain API tokens — never commit them. 每次修改前备份。备份含 API 令牌，严禁入仓。
+---
+
+## 2. Mojibake path entries in config.toml / cc-switch common config
+
+### Symptom / 症状
+
+- `~/.codex/config.toml` or cc-switch common config contains entries like `[projects.'e:\...\ä¸­å›½éœ€æ±‚å†²å‡»']`.
+- Correct Unicode paths also exist; the mojibake entries are dead `[projects.*]` / `perPath` duplicates.
+
+### Root cause / 根因
+
+- UTF-8 Chinese paths written through Windows PowerShell 5.1-era tooling were double-encoded into Latin-1-style mojibake.
+
+### Recovery / 恢复
+
+- Remove only the mojibake lines; keep the correct Unicode paths.
+- Clean both the live config and the cc-switch common config, otherwise the next switch rewrites them back.
+- Validate with `scripts/05_check_codex_config.py`.
+
+### Prevention / 预防
+
+- Keep config files UTF-8; use pwsh 7 for agent shell work; never edit config by fixed line numbers.

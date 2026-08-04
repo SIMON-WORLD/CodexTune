@@ -39,6 +39,7 @@ Everything here is based on real Windows investigations on two machines; measure
 | MCP troubleshooting | Audits MCP config, version conflicts, `--refresh` re-downloads, dead endpoints |
 | Workspace optimization | Finds large sessions, disk pressure, and memory hogs |
 | Performance benchmarking | Measures before/after with reproducible scripts |
+| Config safety | Validates config.toml for removed wire_api, mojibake paths, dead localhost endpoints, missing catalogs |
 
 ## Quick Start
 
@@ -63,6 +64,11 @@ python scripts/02_analyze_logs.py --since "2026-08-02 15:33:30"
 python scripts/02_analyze_logs.py --json
 ```
 
+```powershell
+# Validate ~/.codex/config.toml (read-only)
+python scripts/05_check_codex_config.py
+```
+
 ## Repo Layout
 
 ```text
@@ -78,7 +84,8 @@ CodexTune/
 ├── playbooks/              # Step-by-step troubleshooting guides
 └── scripts/
     ├── 01_collect_evidence.ps1  # Read-only evidence collector
-    └── 02_analyze_logs.py       # Read-only log DB analyzer
+    ├── 02_analyze_logs.py       # Read-only log DB analyzer
+    └── 05_check_codex_config.py # Read-only config.toml safety checker
 ```
 
 ## Playbooks
@@ -92,6 +99,7 @@ Pick the playbook that matches your symptom:
 | Skill/plugin context over budget | [03-skill-bloat.md](playbooks/03-skill-bloat.md) |
 | MCP failures / version conflicts | [04-mcp-and-plugins.md](playbooks/04-mcp-and-plugins.md) |
 | Database bloat / safe recovery | [05-database-safety.md](playbooks/05-database-safety.md) |
+| config.toml broken / mojibake / cc-switch overwrites | [06-config-safety.md](playbooks/06-config-safety.md) |
 
 ## Known Issues
 
