@@ -23,6 +23,7 @@ CodexTune 是一套只读诊断工具、排查手册和可复用 skill，用于�
 - [快速开始](#快速开始)
 - [仓库结构](#仓库结构)
 - [排查手册](#排查手册)
+- [已知问题](#已知问题)
 - [多机协作流程](#多机协作流程)
 - [隐私与安全](#隐私与安全)
 - [参与贡献](#参与贡献)
@@ -72,7 +73,8 @@ CodexTune/
 ├── LICENSE                 # MIT
 ├── docs/
 │   ├── measured-results.md      # 实测前后数据
-│   └── migration-guide.md       # 第二台电脑接入指南
+│   ├── migration-guide.md       # 第二台电脑接入指南
+│   └── known-issues.md          # 已确认问题与恢复步骤
 ├── playbooks/              # 分步排查手册
 └── scripts/
     ├── 01_collect_evidence.ps1  # 只读证据采集
@@ -90,6 +92,10 @@ CodexTune/
 | skill 与插件上下文超预算 | [03-skill-bloat.md](playbooks/03-skill-bloat.md) |
 | MCP 故障 / 版本冲突 | [04-mcp-and-plugins.md](playbooks/04-mcp-and-plugins.md) |
 | 数据库膨胀与安全恢复 | [05-database-safety.md](playbooks/05-database-safety.md) |
+
+## 已知问题
+
+有些看似权限问题的应用级故障，实际由本地配置损坏导致（例如 config.toml 加载失败时，应用会卡在「完成 Windows 设置 / 一次性权限」门禁）。已确认根因与恢复步骤见 [docs/known-issues.md](docs/known-issues.md)。
 
 ## 多机协作流程
 

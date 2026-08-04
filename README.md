@@ -23,6 +23,7 @@ Everything here is based on real Windows investigations on two machines; measure
 - [Quick Start](#quick-start)
 - [Repo Layout](#repo-layout)
 - [Playbooks](#playbooks)
+- [Known Issues](#known-issues)
 - [Multi-Machine Workflow](#multi-machine-workflow)
 - [Privacy & Safety](#privacy--safety)
 - [Contributing](#contributing)
@@ -72,7 +73,8 @@ CodexTune/
 ├── LICENSE                 # MIT
 ├── docs/
 │   ├── measured-results.md      # Real before/after measurements
-│   └── migration-guide.md       # Second-machine onboarding
+│   ├── migration-guide.md       # Second-machine onboarding
+│   └── known-issues.md          # Confirmed issues & recovery
 ├── playbooks/              # Step-by-step troubleshooting guides
 └── scripts/
     ├── 01_collect_evidence.ps1  # Read-only evidence collector
@@ -90,6 +92,10 @@ Pick the playbook that matches your symptom:
 | Skill/plugin context over budget | [03-skill-bloat.md](playbooks/03-skill-bloat.md) |
 | MCP failures / version conflicts | [04-mcp-and-plugins.md](playbooks/04-mcp-and-plugins.md) |
 | Database bloat / safe recovery | [05-database-safety.md](playbooks/05-database-safety.md) |
+
+## Known Issues
+
+App-level failures that look like permission problems but are actually caused by broken local config (e.g. the "Finish Windows setup / one-time permission" gate when config.toml fails to load). Confirmed root causes and recovery steps: [docs/known-issues.md](docs/known-issues.md).
 
 ## Multi-Machine Workflow
 
