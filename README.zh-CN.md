@@ -39,6 +39,7 @@ CodexTune 是一套只读诊断工具、排查手册和可复用 skill，用于�
 | MCP 故障排查 | 审计 MCP 配置、版本冲突、`--refresh` 重复下载、死端点 |
 | 工作区优化 | 发现大会话、磁盘压力与内存大户 |
 | 性能基准测量 | 用可复现脚本测量前后效果 |
+| 配置安全 | 校验 config.toml 的 wire_api、乱码路径、失效 localhost 端点、缺失模型目录 |
 
 ## 快速开始
 
@@ -63,6 +64,11 @@ python scripts/02_analyze_logs.py --since "2026-08-02 15:33:30"
 python scripts/02_analyze_logs.py --json
 ```
 
+```powershell
+# 校验 ~/.codex/config.toml（只读）
+python scripts/05_check_codex_config.py
+```
+
 ## 仓库结构
 
 ```text
@@ -78,7 +84,8 @@ CodexTune/
 ├── playbooks/              # 分步排查手册
 └── scripts/
     ├── 01_collect_evidence.ps1  # 只读证据采集
-    └── 02_analyze_logs.py       # 只读日志库分析
+    ├── 02_analyze_logs.py       # 只读日志库分析
+    └── 05_check_codex_config.py # 只读 config.toml 安全检查
 ```
 
 ## 排查手册
@@ -92,6 +99,7 @@ CodexTune/
 | skill 与插件上下文超预算 | [03-skill-bloat.md](playbooks/03-skill-bloat.md) |
 | MCP 故障 / 版本冲突 | [04-mcp-and-plugins.md](playbooks/04-mcp-and-plugins.md) |
 | 数据库膨胀与安全恢复 | [05-database-safety.md](playbooks/05-database-safety.md) |
+| config.toml 被改坏 / 乱码 / cc-switch 覆盖 | [06-config-safety.md](playbooks/06-config-safety.md) |
 
 ## 已知问题
 

@@ -74,3 +74,40 @@ Updated: 2026-08-02 by Machine B. This supplements `machine-b-cleanup-plan.md` w
 
 - `logs_2.sqlite` (662 MB) safe move-aside rebuild still pending (see playbook 05).
 - 7 active rollouts exceed 496 MB in one research project; handoff + archive still recommended.
+
+## Update 2026-08-04 / 2026-08-04 进展
+
+### Config safety / 配置安全 - done (research + tooling)
+
+- Added `playbooks/06-config-safety.md` and `scripts/05_check_codex_config.py` (read-only config.toml checker).
+- Confirmed root causes:
+  - `wire_api = "chat"` is removed upstream (openai/codex#7782); a crash file on Machine B had this value.
+  - cc-switch is a source of truth and rewrites live config on switch: MCP servers, model catalog, base_url.
+  - cc-switch regenerates `cc-switch-model-catalog.json` from provider `modelCatalog`; without `input_modalities`, image support is lost.
+  - Mojibake path entries came from double-encoded UTF-8 writes by older Windows tooling.
+
+### cc-switch fixes / cc-switch 修复 - done (Machine B)
+
+- Disabled `connector-proxy` in cc-switch MCP table (`enabled_codex=1 -> 0`).
+- Updated `stata-mcp` args to `--from mcp-stata@latest --with mcp<2 mcp-stata`.
+- Both persisted after cc-switch and Codex restarts.
+- Backups recorded privately (not committed).
+
+### Mojibake cleanup / 乱码清理 - done
+
+- Removed 3 double-encoded path entries from cc-switch common config and live `config.toml`; correct Unicode paths kept.
+- Verified with `scripts/05_check_codex_config.py` and `tomllib`.
+
+### Vision bridge handoff / 视觉桥交接 - handed off
+
+- Instruction doc written for the other session: durable fix is to add `input_modalities: ["text","image"]` to the DeepSeek provider `modelCatalog` in the cc-switch DB.
+- Live config currently points to a custom catalog with image support; cc-switch sync can still overwrite it until the DB fix lands.
+
+### PowerShell / 终端确认
+
+- Codex sandbox logs show current shell commands run via `pwsh.exe` (PowerShell 7.6.3); June logs used Windows PowerShell 5.1.
+
+### Parked / 暂缓
+
+- PR #8 (TRACE storm tooling) closed per user instruction; branch `feat/log-db-trace-trigger` retained and can be reopened.
+- Remaining: `logs_2.sqlite` (662 MB) rebuild, 7 large rollouts, vision-bridge durable catalog fix.
