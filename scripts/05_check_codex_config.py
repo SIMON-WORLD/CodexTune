@@ -11,6 +11,8 @@ It flags the known failure modes collected from two Windows machines:
   - model_catalog_json missing or unreadable
   - double-encoded UTF-8 mojibake in paths
   - localhost MCP endpoints that are not listening
+  - named pipe references in MCP env (stale pipe candidates)
+  - local marketplace sources that no longer exist
 
 Does not modify anything. Sensitive values are never printed.
 
@@ -38,6 +40,7 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for Python < 3.11
 # Double-encoded UTF-8 fragments seen in real configs (mojibake from Windows
 # PowerShell 5.1-era writes). Example-only; real paths are never committed.
 MOJIBAKE_FRAGMENTS = [
+
     "ä¸­å›½",
     "è¿è¥",
     "å…¬ä¼—",
@@ -46,6 +49,8 @@ MOJIBAKE_FRAGMENTS = [
     "éœ€æ±",
     "å†²å‡»",
 ]
+
+NAMED_PIPE_PREFIX = "\\\\.\\pipe\\"
 
 LOCALHOSTS = {"127.0.0.1", "localhost", "::1"}
 
@@ -143,6 +148,29 @@ def main() -> int:
             if url.hostname in LOCALHOSTS and url.port:
                 if not check_listen(url.hostname, url.port):
                     add("warning", "mcp-not-listening", f"mcp_servers.{sid}: localhost endpoint not listening: {url_text}")
+
+    for sid, spec in mcp_servers.items():
+        if not isinstance(spec, dict):
+            continue
+        env = spec.get("env")
+        if isinstance(env, dict):
+            for key, value in env.items():
+                if isinstance(value, str) and NAMED_PIPE_PREFIX in value:
+                    add("warning", "named-pipe-env", f"mcp_servers.{sid}.env.{key}: named pipe reference (stale pipe candidate): {value}")
+
+    for mid, mconf in (config.get("marketplaces", {}) or {}).items():
+        if not isinstance(mconf, dict):
+            continue
+        if mconf.get("source_type") == "local":
+            src = mconf.get("source")
+            if isinstance(src, str):
+                p_text = src
+                if p_text.startswith("\\\\?\\"):
+                    p_text = p_text[4:]
+                elif p_text.startswith("\\?\\"):
+                    p_text = p_text[3:]
+                if not pathlib.Path(p_text).exists():
+                    add("warning", "marketplace-source-missing", f"marketplaces.{mid}: local source does not exist: {src}")
 
     return _emit(findings, args.json)
 
