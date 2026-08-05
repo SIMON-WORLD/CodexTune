@@ -58,13 +58,13 @@ The script reports:
 | `model_provider` / `model_providers.*` / `base_url` / `wire_api` | cc-switch (provider switch), third-party bridge tools | cc-switch DB is the source of truth; live-only edits get overwritten |
 | `model_catalog_json` + model catalog file | cc-switch (`modelCatalog`) | cc-switch regenerates the fixed catalog filename and rewrites the pointer on sync |
 | `[mcp_servers.*]` | cc-switch MCP table | rebuilt from the DB on sync |
-| `[marketplaces.*]` | Codex desktop/CLI auto-refresh | local sources can become dead paths after moves |
+| `[marketplaces.*]` | cc-switch common config / Codex desktop | local sources can become dead paths after moves |
 | `[projects.*]` trust | Codex when opening new dirs | can contain mojibake path keys from old tooling |
 | `[desktop.*]`, avatar, theme | Codex desktop app | UI state; usually harmless |
-| `notify`, `[shell_environment_policy.set]` | Codex desktop/runtime | paths/values may change with app updates |
+| `notify`, `[shell_environment_policy.set]` | cc-switch common config / Codex desktop/runtime | paths/values may change with app updates |
 | `wire_api = "chat"` | legacy third-party tools | removed upstream; must not exist |
 
-配置段/字段归属：cc-switch 管 provider、MCP、模型目录与公共配置；桌面应用管市场、信任、主题与头像；第三方桥接工具可能临时改 `base_url`/`model_provider`；用户手工修改应只在备份后进行，并以 cc-switch 数据库为准。
+配置段/字段归属：cc-switch 管 provider、MCP、模型目录与公共配置（含市场与 shell 环境注入）；桌面应用管市场刷新、信任、主题与头像；第三方桥接工具可能临时改 `base_url`/`model_provider`；用户手工修改应只在备份后进行，并以 cc-switch 数据库为准。
 
 ## Notes / 备注
 
