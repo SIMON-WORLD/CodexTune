@@ -40,7 +40,6 @@ except ModuleNotFoundError:  # pragma: no cover - fallback for Python < 3.11
 # Double-encoded UTF-8 fragments seen in real configs (mojibake from Windows
 # PowerShell 5.1-era writes). Example-only; real paths are never committed.
 MOJIBAKE_FRAGMENTS = [
-
     "ä¸­å›½",
     "è¿è¥",
     "å…¬ä¼—",
