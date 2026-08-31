@@ -13,7 +13,9 @@
 
 CodexTune is a collection of read-only diagnostic tools, playbooks, and a reusable skill for finding and fixing performance problems in ChatGPT/Codex Desktop — slow cold start, slow old-thread loading, skill/plugin context pressure, MCP failures, workspace bloat, and memory pressure.
 
-Everything here is based on real Windows investigations on two machines; measured before/after data lives in [docs/measured-results.md](docs/measured-results.md).
+---
+
+Documents follow the bilingual style guide in [docs/STYLE.md](docs/STYLE.md).
 
 ---
 
