@@ -1,6 +1,6 @@
 ---
 name: codextune
-description: Use when Codex/ChatGPT Desktop 启动慢、旧任务加载慢，或 config.toml、cc-switch、skill、插件、MCP 引发性能或配置加载问题。
+description: Use when Codex/ChatGPT Desktop 启动慢、旧任务加载慢，或 config.toml、cc-switch、skill、插件、MCP 或日志库增长/写放大引发性能或配置加载问题。
 ---
 
 # CodexTune
@@ -18,9 +18,10 @@ description: Use when Codex/ChatGPT Desktop 启动慢、旧任务加载慢，或
    ```
 
    检查器需要 Python 3.11+；更旧版本需在隔离环境中提供 `tomli`。
-3. 定位现象：冷启动慢 / 旧任务慢 / 每轮变重 / MCP 反复失败，对号入座到 `playbooks/`。
-4. 对照实验：每次只改一个变量（插件、MCP、skill、日志库），改前备份、改后复测。
-5. 完成前验证：修复是否生效以实测为准，不以“看起来对”为准。
+3. 日志库专项：当感觉每轮变重、启动/恢复变慢，或 `logs_2.sqlite` 增长明显时，先做只读 TRACE 写盘审计（`playbooks/07-codex-trace-write-audit.md`），再决定是否走数据库安全重建。
+4. 定位现象：冷启动慢 / 旧任务慢 / 每轮变重 / MCP 反复失败 / 日志库增长，对号入座到 `playbooks/`。
+5. 对照实验：每次只改一个变量（插件、MCP、skill、日志库），改前备份、改后复测。
+6. 完成前验证：修复是否生效以实测为准，不以“看起来对”为准。
 
 ## 红线
 
