@@ -1,4 +1,4 @@
-# Measured Results
+# Measured Results / 实测结果
 
 Real measurements from Windows investigations (2026-08). Machine: Windows 10/11, ChatGPT/Codex Desktop, 16GB RAM.
 
