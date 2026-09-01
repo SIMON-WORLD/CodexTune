@@ -22,3 +22,9 @@ Thanks for helping CodexTune improve! / 感谢你帮助改进 CodexTune！
 - [ ] Before/after measurement included / 附前后实测数据
 - [ ] No secrets, no real paths / 无敏感信息与真实路径
 - [ ] README/docs updated if needed / 必要时更新文档
+
+## Documentation style / 文档规范
+
+- 正文用中文；章节标题用「English / 中文」双语（英文在前、中文在后）。
+- 示例路径用 `$env:USERPROFILE` / 相对路径，禁止真实绝对路径、令牌、会话正文。
+- 详见 [docs/STYLE.md](docs/STYLE.md)。

@@ -13,7 +13,9 @@
 
 CodexTune 是一套只读诊断工具、排查手册和可复用 skill，用于发现并修复 ChatGPT/Codex Desktop 的性能问题：冷启动慢、旧任务加载慢、skill 与插件上下文超预算、MCP 故障、工作区膨胀与内存压力。
 
-方案基于两台 Windows 电脑的真实排查，前后对照数据见 [docs/measured-results.md](docs/measured-results.md)。
+---
+
+文档风格见 [docs/STYLE.md](docs/STYLE.md)。
 
 ---
 
